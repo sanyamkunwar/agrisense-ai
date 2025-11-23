@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Virtual env
+venv/
+.env
+
+# Models
+models/disease_model/
+models/embeddings/
+
+# Data
+data/raw/
+data/knowledge_base/*.pdf
+data/knowledge_base/*.txt
+data/knowledge_base/processed_kb.json
+
+# Streamlit
+.streamlit/
+
+# MacOS
+.DS_Store
