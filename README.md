@@ -39,12 +39,12 @@ An AI-powered crop disease detection and farming knowledge system combining **Co
 
 ```mermaid
 flowchart LR
-A[Leaf Image Upload] --> B["EfficientNet-B0 Model<br/>Disease Classification"]
-B --> C[Auto Query Generator]
-C --> D["RAG Retriever<br/>ChromaDB + Embeddings"]
-D --> E[LLM (GPT-4o-mini)]
-E --> F[Final Treatment Advice]
-F --> G[Streamlit UI Output]
+    A[Leaf Image Upload] --> B["EfficientNet-B0 Model<br/>Disease Classification"]
+    B --> C[Auto Query Generator]
+    C --> D["RAG Retriever<br/>ChromaDB + Embeddings"]
+    D --> E[LLM (GPT-4o-mini)"]
+    E --> F[Final Treatment Advice]
+    F --> G[Streamlit UI Output"]
 ```
 
 ---
