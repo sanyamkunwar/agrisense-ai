@@ -42,25 +42,34 @@ st.write("---")
 #     IMAGE UPLOAD + COMPUTER VISION DISEASE DETECTION
 # ============================================================
 
-uploaded = st.file_uploader("📸 Upload a leaf image", type=["jpg", "jpeg", "png"])
-
-if uploaded:
-    img = Image.open(uploaded)
+def run_analysis(image_file):
+    """
+    Runs the disease detection and RAG analysis on a given image.
+    
+    Args:
+        image_file: A file-like object or a path to an image file.
+    """
+    img = Image.open(image_file)
 
     col1, col2 = st.columns([1, 2])
 
     with col1:
-        st.image(img, caption="Uploaded Leaf", width=350)
+        st.image(img, caption="Analyzed Leaf", width=350)
 
     with col2:
         st.subheader("🔍 Disease Detection (Computer Vision)")
 
-        result = predict(uploaded, top_k=3)
+        # The `predict` function needs a file-like object. If image_file is a path, open it.
+        if isinstance(image_file, str):
+            with open(image_file, "rb") as f:
+                result = predict(f, top_k=3)
+        else:
+            result = predict(image_file, top_k=3)
+
         st.success(f"Detected: **{result['label']}** ({result['confidence']*100:.2f}%)")
 
         # Save disease name
         st.session_state.last_detected_disease = result["label"]
-
 
         st.write("### Top-3 Predictions")
         for cls, prob in result["topk"]:
@@ -80,6 +89,33 @@ if uploaded:
         st.write("### Sources Used")
         for i, s in enumerate(sources, 1):
             st.write(f"{i}. {s}")
+
+# --- UI for Image Selection ---
+
+# Get list of sample images
+SAMPLE_IMG_DIR = "sample_files/images"
+try:
+    # Sort the files for consistent order
+    sample_image_files = ["-- Select a sample --"] + sorted([f for f in os.listdir(SAMPLE_IMG_DIR) if f.lower().endswith(('.png', '.jpg', '.jpeg', '.JPG'))])
+except FileNotFoundError:
+    sample_image_files = ["-- Select a sample --"]
+    st.warning(f"Sample image directory not found at '{SAMPLE_IMG_DIR}'. The sample image selector will be disabled.")
+
+
+selected_sample = st.selectbox(
+    "🧪 Select a sample image to test:",
+    options=sample_image_files
+)
+
+uploaded_file = st.file_uploader("...or upload your own leaf image 📸", type=["jpg", "jpeg", "png"])
+
+# --- Run Analysis ---
+# Give priority to uploaded file, otherwise use the sample.
+if uploaded_file:
+    run_analysis(uploaded_file)
+elif selected_sample != "-- Select a sample --":
+    image_path = os.path.join(SAMPLE_IMG_DIR, selected_sample)
+    run_analysis(image_path)
 
 st.write("---")
 
