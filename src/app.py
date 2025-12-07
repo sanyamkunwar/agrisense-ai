@@ -39,8 +39,50 @@ st.write("---")
 
 
 # ============================================================
+#                     DEBUGGING SECTION
+# ============================================================
+with st.expander("🐞 Open for Debugging Information"):
+    st.subheader("File System & ChromaDB Inspection")
+    try:
+        import chromadb
+
+        # --- List Files ---
+        st.write("**File system listing for './models/':**")
+        debug_output = []
+        for root, dirs, files in os.walk("models"):
+            level = root.replace("models", '').count(os.sep)
+            indent = " " * 4 * (level)
+            debug_output.append(f"{indent}{os.path.basename(root)}/")
+            subindent = " " * 4 * (level + 1)
+            for f in sorted(files):
+                debug_output.append(f"{subindent}{f}")
+        st.code("\n".join(debug_output))
+
+        # --- Check ChromaDB ---
+        st.write("**ChromaDB Collections:**")
+        db_dir = os.getenv("CHROMA_DB_DIR", "models/embeddings/")
+        if not os.path.exists(db_dir):
+            st.error(f"ChromaDB directory not found at: {db_dir}")
+        else:
+            client = chromadb.PersistentClient(path=db_dir)
+            collections = client.list_collections()
+            if not collections:
+                st.warning("No collections found in ChromaDB.")
+            else:
+                st.code([c.name for c in collections])
+                st.success("Found collections above.")
+
+    except Exception as e:
+        st.error(f"An error occurred during debugging: {e}")
+# ============================================================
+#                   END DEBUGGING SECTION
+# ============================================================
+
+
+# ============================================================
 #     IMAGE UPLOAD + COMPUTER VISION DISEASE DETECTION
 # ============================================================
+
 
 def run_analysis(image_file):
     """
