@@ -8,7 +8,7 @@ import streamlit as st
 from dotenv import load_dotenv
 from PIL import Image
 from cv_module.infer import predict
-from rag_module.generate import generate_answer
+# from rag_module.generate import generate_answer # DEFER import to prevent startup crash
 
 
 # ---- Load environment ----
@@ -124,6 +124,7 @@ def run_analysis(image_file):
 
         st.subheader("💬 Treatment Advice (RAG + LLM)")
         with st.spinner("Generating treatment advice..."):
+            from rag_module.generate import generate_answer
             answer, sources = generate_answer(query)
 
         st.write(answer)
@@ -190,6 +191,7 @@ if send:
             final_query = user_q
 
         with st.spinner("Thinking..."):
+            from rag_module.generate import generate_answer
             answer, sources = generate_answer(final_query)
 
         st.session_state.chat_history.append(("Assistant", answer))
